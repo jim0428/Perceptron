@@ -14,9 +14,9 @@ class perceptron:
         
         return correct / float(len(actual)) * 100.0
 
-    def test_predict(self,dataset_test_feature):
+    def allDataToPredict(self,dataset_feature):
         test_predict = np.array([])
-        for feature in dataset_test_feature:
+        for feature in dataset_feature:
             test_predict = np.append(test_predict,self.predict(feature))
         
         return test_predict
@@ -34,8 +34,12 @@ class perceptron:
             predict_ans = 0
         return predict_ans
 
-    def train(self,dataset_train_feature,dataset_train_label):
-        for _ in range(self.iteration):
+    def train(self,stop_score,dataset_train_feature,dataset_train_label):
+        for i in range(self.iteration):
+            train_predict = self.allDataToPredict(dataset_train_feature)
+            train_score = self.accuracy(train_predict,dataset_train_label)
+            if(train_score >= stop_score):
+                return i + 1
             for feature,label in zip(dataset_train_feature,dataset_train_label):
                 predict_ans = self.predict(feature)
                 
@@ -47,4 +51,4 @@ class perceptron:
                     # w(n) + nx(n)
                     self.weight[1:] = self.weight[1:] + (self.learning_rate * feature)
                     self.weight[0] = self.weight[0] + (self.learning_rate)   
-
+        return self.iteration

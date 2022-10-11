@@ -3,9 +3,14 @@ from tkinter import filedialog
 
 from Preprocessor import preprocessor
 from model import perceptron
+
 import numpy as np
 
-def predict_data(window,learning_rate,iteration,stop_rate,weight_text,Train_score_text,Test_score_text):
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
+def predict_data(window,learning_rate,iteration,stop_score,weight_text,Train_score_text,Test_score_text,iteration_times_text):
     # 1. 處理資料，先將資料 2/3 當作訓練資料，1/3 當做測試資料
     dataProcessor = preprocessor()
     dataset = dataProcessor.readfile(file_url)
@@ -16,18 +21,19 @@ def predict_data(window,learning_rate,iteration,stop_rate,weight_text,Train_scor
     
     # 2. 將訓練資料拿去訓練 => 有訓練完的model
     perceptron_ = perceptron(iteration, len(dataset_train_feature[0]) ,learning_rate)
-    perceptron_.train(dataset_train_feature,dataset_train_label)
+    iteration_times = perceptron_.train(stop_score,dataset_train_feature,dataset_train_label)
 
     # 3. 將train data 跟 test data 拿去預測
-    train_predict = perceptron_.test_predict(dataset_train_feature)
-    test_predict = perceptron_.test_predict(dataset_test_feature)
+    train_predict = perceptron_.allDataToPredict(dataset_train_feature)
+    test_predict = perceptron_.allDataToPredict(dataset_test_feature)
     train_score = perceptron_.accuracy(train_predict,dataset_train_label)
     test_score = perceptron_.accuracy(test_predict,dataset_test_label)
     print(train_score,test_score)
 
-    weight_text.set(perceptron_.weight) # 設定 weight 的內容
-    Train_score_text.set(train_score)   # 設定 train_score 的內容
-    Test_score_text.set(test_score)     # 設定 test_score 的內容
+    weight_text.set(perceptron_.weight)         # 設定 weight 的內容
+    Train_score_text.set(train_score)           # 設定 train_score 的內容
+    Test_score_text.set(test_score)             # 設定 test_score 的內容
+    iteration_times_text.set(iteration_times)   # 設定 iteration_times 的內容
     
     tk.Label(window, textvariable=weight_text).place(x=100, y=170)
     
@@ -35,11 +41,49 @@ def predict_data(window,learning_rate,iteration,stop_rate,weight_text,Train_scor
     
     tk.Label(window, textvariable=Test_score_text).place(x=100, y=230)
 
+    tk.Label(window, textvariable=Test_score_text).place(x=100, y=230)
+
+    tk.Label(window, textvariable=iteration_times_text).place(x=100, y=260)
+
     if(len(dataset_train_feature[0] == 2)):
         #畫2D的圖
-        two_dimension_plot(perceptron_.weight,dataset_test_feature,dataset_test_feature)
+        two_dimension_plot(window,perceptron_.weight,dataset)
 
-def two_dimension_plot(weight,dataset_train_feature,dataset_test_feature):
+def two_dimension_plot(window,weight,dataset):
+    f = Figure(figsize=(5, 4), dpi=100)
+    f_plot = f.add_subplot(111)
+    f_plot.clear()
+    zero_class_x_feature = np.array([feature[0] for feature in dataset if feature[2] != 0])
+    zero_class_y_feature = np.array([feature[1] for feature in dataset if feature[2] != 0])
+
+    first_class_x_feature = np.array([feature[0] for feature in dataset if feature[2] != 1])
+    first_class_y_feature = np.array([feature[1] for feature in dataset if feature[2] != 1])
+
+    f_plot.scatter(zero_class_x_feature,zero_class_y_feature, color = 'hotpink')
+    f_plot.scatter(first_class_x_feature,first_class_y_feature, color = '#88c999')
+
+    x_min = min(min(zero_class_x_feature),min(first_class_x_feature))
+    x_max = max(max(zero_class_x_feature),max(first_class_x_feature))
+    print(x_min,x_max)
+    x = np.arange(x_min - 5,x_max + 5,2)
+    y = (-weight[1] / weight[2]) * x - (weight[0] / weight[2])
+    f_plot.plot(x,y)
+
+    # x = np.linspace(min(min(zero_class_y_feature),min(first_class_y_feature)),max(max(zero_class_x_feature),max(first_class_x_feature)), len(dataset)) 
+    # y = weight[2] * x + weight[1]
+    # f_plot.plot(x,y)
+
+    canvs = FigureCanvasTkAgg(f, window)
+
+    canvs.draw()
+
+    canvs.get_tk_widget().place(x=300,y=80)
+
+    #canvs.
+
+    #canvs.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
+
     pass
 
 def get_file_url(file_name):
@@ -74,13 +118,13 @@ def main():
 
     #輸入迭代次數
 
-    tk.Label(window, text='Iteration:').place(x = 20,y = 80)
+    tk.Label(window, text='Stop iteration:').place(x = 20,y = 80)
     interation = tk.Entry(window)
     interation.place(x = 120,y = 80)
    
     
     #Stop rate:
-    tk.Label(window, text='Stop rate:').place(x = 20,y = 110)
+    tk.Label(window, text='Stop score:').place(x = 20,y = 110)
     stop_rate = tk.Entry(window)
     stop_rate.place(x = 120,y = 110)
     
@@ -100,9 +144,13 @@ def main():
     Test_score_text = tk.StringVar()     # 設定 Test_score 為文字變數
     Test_score_text.set('')              # 設定 Test_score 的內容
 
+    #iteration_times
+    tk.Label(window, text='iteration_times:').place(x = 20,y = 260)
+    iteration_times_text = tk.StringVar()     # 設定 Test_score 為文字變數
+    iteration_times_text.set('')              # 設定 Test_score 的內容
 
     #開始預測資料
-    tk.Button(window, text='確認',command= lambda: predict_data(window,float(learning_rate.get()),int(interation.get()),(stop_rate.get()),weight_text,Train_score_text,Test_score_text)).place(x = 80,y = 140)
+    tk.Button(window, text='確認',command= lambda: predict_data(window,float(learning_rate.get()),int(interation.get()),float(stop_rate.get()),weight_text,Train_score_text,Test_score_text,iteration_times_text)).place(x = 80,y = 140)
 
 
     
