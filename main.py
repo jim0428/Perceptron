@@ -7,8 +7,6 @@ from plot import ploter
 
 import numpy as np
 
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 def predict_data(window,learning_rate,iteration,stop_score,weight_text,Train_score_text,Test_score_text,iteration_times_text):
