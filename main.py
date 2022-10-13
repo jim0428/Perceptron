@@ -47,11 +47,13 @@ def predict_data(window,learning_rate,iteration,stop_score,weight_text,Train_sco
     tk.Label(window, textvariable=iteration_times_text).place(x=100, y=260)
 
     plot = ploter(window,perceptron_.weight,dataset)
-
-    if(len(dataset_train_feature[0] == 2)):
+    print(len(dataset_train_feature[0]))
+    if(len(dataset_train_feature[0]) == 2):
         #畫2D的圖
         plot.two_dimension_plot()
-
+    elif(len(dataset_train_feature[0]) == 3):
+        #畫3D的圖
+        plot.three_dimension_plot()
 
 
 def get_file_url(file_name):
