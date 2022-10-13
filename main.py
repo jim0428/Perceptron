@@ -3,6 +3,7 @@ from tkinter import filedialog
 
 from Preprocessor import preprocessor
 from model import perceptron
+from plot import ploter
 
 import numpy as np
 
@@ -45,46 +46,13 @@ def predict_data(window,learning_rate,iteration,stop_score,weight_text,Train_sco
 
     tk.Label(window, textvariable=iteration_times_text).place(x=100, y=260)
 
+    plot = ploter(window,perceptron_.weight,dataset)
+
     if(len(dataset_train_feature[0] == 2)):
         #畫2D的圖
-        two_dimension_plot(window,perceptron_.weight,dataset)
-
-def two_dimension_plot(window,weight,dataset):
-    f = Figure(figsize=(5, 4), dpi=100)
-    f_plot = f.add_subplot(111)
-    f_plot.clear()
-    zero_class_x_feature = np.array([feature[0] for feature in dataset if feature[2] != 0])
-    zero_class_y_feature = np.array([feature[1] for feature in dataset if feature[2] != 0])
-
-    first_class_x_feature = np.array([feature[0] for feature in dataset if feature[2] != 1])
-    first_class_y_feature = np.array([feature[1] for feature in dataset if feature[2] != 1])
-
-    f_plot.scatter(zero_class_x_feature,zero_class_y_feature, color = 'hotpink')
-    f_plot.scatter(first_class_x_feature,first_class_y_feature, color = '#88c999')
-
-    x_min = min(min(zero_class_x_feature),min(first_class_x_feature))
-    x_max = max(max(zero_class_x_feature),max(first_class_x_feature))
-    print(x_min,x_max)
-    x = np.arange(x_min - 5,x_max + 5,2)
-    y = (-weight[1] / weight[2]) * x - (weight[0] / weight[2])
-    f_plot.plot(x,y)
-
-    # x = np.linspace(min(min(zero_class_y_feature),min(first_class_y_feature)),max(max(zero_class_x_feature),max(first_class_x_feature)), len(dataset)) 
-    # y = weight[2] * x + weight[1]
-    # f_plot.plot(x,y)
-
-    canvs = FigureCanvasTkAgg(f, window)
-
-    canvs.draw()
-
-    canvs.get_tk_widget().place(x=300,y=80)
-
-    #canvs.
-
-    #canvs.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        plot.two_dimension_plot()
 
 
-    pass
 
 def get_file_url(file_name):
     global file_url 

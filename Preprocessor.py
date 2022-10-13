@@ -23,11 +23,20 @@ class preprocessor:
         return dataset
 
     def convert_label(self,dataset):
+        check = dict()
+        idx = 0
         for pos in range(len(dataset)):
-            if(dataset[pos][-1] == 1):
-                dataset[pos][-1] = 0
-            elif(dataset[pos][-1] == 2):
-                dataset[pos][-1] = 1
+            if dataset[pos][-1] not in check:
+                check[dataset[pos][-1]] = idx
+                idx += 1
+            dataset[pos][-1] = check[dataset[pos][-1]]            
+                 
+
+        # for pos in range(len(dataset)):
+        #     if(dataset[pos][-1] == 1):
+        #         dataset[pos][-1] = 0
+        #     elif(dataset[pos][-1] == 2):
+        #         dataset[pos][-1] = 1
         return dataset
 
     def split_train_test(self,dataset):
