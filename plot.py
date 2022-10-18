@@ -67,15 +67,6 @@ class ploter:
         f_plot.set_ylabel('Y')
         f_plot.set_zlabel('Z')
 
-        # x_min = min(min(zero_class_x_feature),min(first_class_x_feature))
-        # x_max = max(max(zero_class_x_feature),max(first_class_x_feature))
-        # print(x_min,x_max)
-        # x = np.arange(x_min - 3,x_max + 3,2)
-        # y = (-self.weight[1] / self.weight[2]) * x - (self.weight[0] / self.weight[2])
-        # f_plot.plot(x,y)
-
         canvs = FigureCanvasTkAgg(f, self.window)
-
         canvs.draw()
-
         canvs.get_tk_widget().place(x=300,y=80)

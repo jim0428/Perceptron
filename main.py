@@ -5,10 +5,6 @@ from Preprocessor import preprocessor
 from model import perceptron
 from plot import ploter
 
-import numpy as np
-
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
 def predict_data(window,learning_rate,iteration,stop_score,weight_text,Train_score_text,Test_score_text,iteration_times_text):
     # 1. 處理資料，先將資料 2/3 當作訓練資料，1/3 當做測試資料
     dataProcessor = preprocessor()
@@ -34,6 +30,7 @@ def predict_data(window,learning_rate,iteration,stop_score,weight_text,Train_sco
     Test_score_text.set(test_score)             # 設定 test_score 的內容
     iteration_times_text.set(iteration_times)   # 設定 iteration_times 的內容
     
+    #將結果印在GUI上
     tk.Label(window, textvariable=weight_text).place(x=100, y=170)
     
     tk.Label(window, textvariable=Train_score_text).place(x=100, y=200)
@@ -114,11 +111,19 @@ def main():
 
     #iteration_times
     tk.Label(window, text='iteration_times:').place(x = 20,y = 260)
-    iteration_times_text = tk.StringVar()     # 設定 Test_score 為文字變數
-    iteration_times_text.set('')              # 設定 Test_score 的內容
+    iteration_times_text = tk.StringVar()     # 設定 iteration_times 為文字變數
+    iteration_times_text.set('')              # 設定 iteration_times 的內容
 
     #開始預測資料
-    tk.Button(window, text='確認',command= lambda: predict_data(window,float(learning_rate.get()),int(interation.get()),float(stop_rate.get()),weight_text,Train_score_text,Test_score_text,iteration_times_text)).place(x = 80,y = 140)
+    tk.Button(window, text='確認',command= lambda: predict_data(
+            window,float(learning_rate.get()),
+            int(interation.get()),
+            float(stop_rate.get()),
+            weight_text,
+            Train_score_text,
+            Test_score_text,
+            iteration_times_text
+    )).place(x = 80,y = 140)
 
 
     

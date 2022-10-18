@@ -2,3 +2,6 @@
 /dist/*
 
 main.spec
+
+*.docx
+*.pdf
